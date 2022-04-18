@@ -17,7 +17,7 @@ const CARD_VALUE_MAP = {
   "♣": 15,
   "♦": 16,
   "♥": 17,
-  "♠": 18
+  "♠": 18,
 };
 
 const computerCardSlot = document.querySelector(".computer-card-slot");
@@ -26,7 +26,18 @@ const computerDeckElement = document.querySelector(".computer-deck");
 const playerDeckElement = document.querySelector(".player-deck");
 const text = document.querySelector(".text");
 
-let playerDeck, computerDeck, inRound, stop, playerArr = [];
+let playerDeck,
+  computerDeck,
+  inRound,
+  stop,
+  playerArr = [];
+
+  let suitArr = []
+  let valueArr = []
+  let diamNums 
+  let clubNums
+  let heartNums 
+  let spadeNums 
 
 document.addEventListener("click", () => {
   if (stop) {
@@ -61,11 +72,14 @@ function cleanBeforeRound() {
   playerCardSlot.innerHTML = "";
   text.innerHTML = "";
 
+
   updateDeckCount();
 }
 
 function flipCards() {
   inRound = true;
+  playerArr = [];
+  
 
   const playerCard = playerDeck.pop();
   const playerCard2 = playerDeck.pop();
@@ -93,15 +107,112 @@ function flipCards() {
 
   updateDeckCount();
 
-  playerArr.push(playerCard, playerCard2, playerCard3, playerCard4, playerCard5);
-  console.log(playerArr)
+  playerArr.push(
+    playerCard,
+    playerCard2,
+    playerCard3,
+    playerCard4,
+    playerCard5
+  );
+  //console.log(playerArr)
 
-  console.log(playerCard)
+  //console.log(playerCard);
+  //console.log(playerCard.suit);
+  //console.log(Object.values(playerCard).includes('♦'))
+
+  let royalFlush = ["10", "J", "Q", "K", "A"];
+  let straightFlush = ["4", "5", "6", "7", "8"];
+  let flush = ["A", "Q", "6", "J", "2"];
+  let straight = ["K", "Q", "J", "10", "9"];
+
+  let royalFlushNums = 0;
+  let straightFlushNums = 0;
+  let flushNums = 0;
+  let straightNums = 0;
+
+  suitArr.length = 0;
+  valueArr.length = 0;
+  diamNums = 0;
+  clubNums = 0;
+  heartNums = 0;
+  spadeNums = 0;
+  console.log(heartNums)
+  console.log(suitArr)
+
+
+  playerArr.forEach(function (arrItem) {
+    for (let k in arrItem) {
+
+      if (arrItem[k] === "♦") {
+        diamNums++;
+      }
+      if (arrItem[k] === "♣") {
+        clubNums++;
+      }
+      if (arrItem[k] === "♥") {
+        heartNums++;
+      }
+      if (arrItem[k] === "♠") {
+        spadeNums++;
+      }
+
+      if (royalFlush.indexOf(arrItem[k]) > -1) {
+        //return royalFlushNums++;
+        royalFlushNums++;
+      }
+      if (straightFlush.indexOf(arrItem[k]) > -1) {
+        straightFlushNums++;
+      }
+      if (flush.indexOf(arrItem[k]) > -1) {
+        flushNums++;
+      }
+      if (straight.indexOf(arrItem[k]) > -1) {
+        straightNums++;
+      }
+      //console.log(checkNums);
+      //console.log(arrItem[k]);
+    }
+    //console.log(arrItem);
+  });
+  suitArr.push(diamNums, clubNums, heartNums, spadeNums);
+  //valueArr.push(royalFlushNums, straightFlushNums, flushNums, straightNums);
+
+  //console.log(suitArr);
+  //console.log(checkNums)
+
+  if(suitArr.includes(5) && royalFlushNums === 5) {
+    console.log('[10]')
+  } else {
+    console.log('No Royal Flush')
+  }
+
+  if(suitArr.includes(5) && straightFlushNums === 5) {
+    console.log('[9]')
+  } else {
+    console.log('No Straight Flush')
+  }
+
+  if(suitArr.includes(5) && flushNums === 5) {
+    console.log('[6]')
+  } else {
+    console.log('No Flush')
+  }
+
+  if(straightNums === 5) {
+    console.log('[5]')
+  } else {
+    console.log('No Straight')
+  }
+
+
+
+
+
+  /*console.log(playerCard)
   console.log(playerCard2)
   console.log(playerCard3)
   console.log(playerCard4)
-  console.log(playerCard5)
-
+  console.log(playerCard5)*/
 
   if (isRoundWinner(playerCard, computerCard)) {
     text.innerText = "Win";
@@ -123,6 +234,7 @@ function flipCards() {
 function updateDeckCount() {
   computerDeckElement.innerText = computerDeck.numberOfCards;
   playerDeckElement.innerText = playerDeck.numberOfCards;
+  
 }
 
 function isRoundWinner(cardOne, cardTwo) {
